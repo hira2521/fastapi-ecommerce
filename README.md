@@ -139,25 +139,6 @@ The test suite currently covers:
 ---
 
 ## Project Structure
-ecommerce_store/
-│
-├── app/
-│   ├── main.py
-│   ├── crud.py
-│   ├── models.py
-│   ├── schemas.py
-│   ├── auth.py
-│   ├── database.py
-│   └── create_admin.py
-│
-├── tests/
-│   ├── conftest.py
-│   └── test_auth.py
-│
-├── requirements.txt
-├── store.db
-|___ .gitignore
-└── README.md
 
 - main.py contains the FastAPI application and API endpoints
 - crud.py contains business logic and database operations
