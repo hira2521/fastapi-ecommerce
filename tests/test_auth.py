@@ -60,6 +60,19 @@ def test_create_product(client: TestClient, admin_token):
     assert response.status_code == 200
     assert response.json()["message"] == "Product created successfully."
 
+def test_delete_product(client: TestClient, admin_token, create_product):
+    response = client.delete(
+        "/products/1",
+        headers = admin_token
+        )
+    
+    assert response.status_code == 200
+    assert "successfully deleted" in response.json()["message"].lower()
+
+    #additional check to ensure product is gone
+    get_response = client.get("/products/1")
+    assert get_response.status_code == 404
+
 def test_place_order(client: TestClient, user_token, create_product):  
     response = client.post(
         "/orders",

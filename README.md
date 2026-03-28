@@ -31,17 +31,30 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
+### 4. Set up environment variables
 
-### 4. Create the database
+Create a `.env` file in the project root:
+
+```bash
+touch .env
+```
+
+Generate a secure secret key:
+python3 -c "import os; print(os.urandom(32).hex())"
+
+Add it to your .env file:
+SECRET_KEY=your-generated-key-here
+
+### 5. Create the database
 
 The SQLite database will be created automatically when the application starts.
 
-### 5. Create the admin user
+### 6. Create the admin user
 
 Run the script below to create the default admin account.
 
@@ -54,13 +67,13 @@ Email: admin@example.com
 Password: adminpassword
 
 
-### 6. Start the FastAPI server
+### 7. Start the FastAPI server
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-### 7. Access the API documentation
+### 8. Access the API documentation
 
 Open the following URL in your browser:
 
@@ -102,6 +115,9 @@ Administrators can:
 - Update order status
 
 ### Testing
+
+Run all tests using pytest command:
+python3 -m pytest -v
 
 Automated API tests are implemented using pytest and FastAPI TestClient.
 
@@ -156,6 +172,7 @@ ecommerce_store/
 │
 ├── requirements.txt
 ├── store.db
+|-- .env
 |___ .gitignore
 └── README.md
 

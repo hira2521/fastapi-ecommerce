@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
@@ -13,8 +16,6 @@ from .schemas import (
 from .models import OrderStatus, ProductDB, UserDB, OrderDB, OrderItemDB
 from . import crud
 
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -57,6 +58,13 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
         "stock": product.stock
     }
 
+@app.delete("/products/{product_id}")
+def delete_product(product_id: int, db: Session = Depends(get_db), admin: UserDB = Depends(require_admin)):
+    crud.delete_product(db, product_id)
+    return {
+        "message": f"Product ID: {product_id} successfully deleted."
+    }
+    
 # ---------- ORDERS ----------
 @app.post("/orders")
 def place_order(request: PlaceOrderRequest, db: Session = Depends(get_db), user: UserDB = Depends(get_current_user)):
@@ -112,7 +120,7 @@ def list_orders(db: Session = Depends(get_db), admin: UserDB = Depends(require_a
             }
             for o in orders
     ]
-    
+
 #admin order search only
 @app.get("/orders/{order_id}")
 def get_order(order_id: int, db: Session = Depends(get_db), admin: UserDB = Depends(require_admin)):

@@ -24,6 +24,14 @@ def get_product(db: Session, product_id: int):
         raise HTTPException(status_code=404, detail=f"Product with id {product_id} not found.")
     return product
 
+def delete_product(db: Session, product_id):
+    product = db.query(ProductDB).filter(ProductDB.product_id == product_id).first()
+    if product is None:
+        raise HTTPException(status_code=404, detail=f"Product with id {product_id} not found.")
+    
+    db.delete(product)
+    db.commit()
+    return None
 #-------ORDERS----------
 
 def place_order(db: Session, email: str, items: list[CartItemRequest]):
@@ -35,9 +43,9 @@ def place_order(db: Session, email: str, items: list[CartItemRequest]):
         raise HTTPException(status_code=400, detail="Cart is empty.")
 
     # 2) create order once
-    order_id = _next_order_id(db)
-    order = OrderDB(order_id=order_id, email=email, status=OrderStatus.pending.value, total_price=0.0)
+    order = OrderDB(email=email, status=OrderStatus.pending.value, total_price=0.0)
     db.add(order) 
+    db.flush() #Will allow for order ID to be auto generated so we can use it to create order items object.
     
     total_price = 0.0
 
@@ -70,7 +78,7 @@ def place_order(db: Session, email: str, items: list[CartItemRequest]):
 
         # create order item row for each product in the order
         order_item = OrderItemDB(
-            order_id=order_id,
+            order_id=order.order_id,
             product_id=product_id,
             quantity=quantity,
             price=item_price,
@@ -94,12 +102,6 @@ def list_orders(db: Session):
 
 def list_users(db: Session):
     return db.query(UserDB).all()
-
-def _next_order_id(db: Session) -> int:
-    last = db.query(OrderDB).order_by(OrderDB.order_id.desc()).first()
-    if last is None:
-        return 1
-    return last.order_id + 1
 
 def get_order(db: Session, order_id: int):
     order = db.query(OrderDB).filter(OrderDB.order_id == order_id).first()

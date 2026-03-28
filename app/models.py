@@ -33,7 +33,7 @@ class OrderDB(Base):
     __tablename__ = "orders"
     
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, unique=True, index=True)
+    order_id = Column(Integer, unique=True, index=True, autoincrement=True)
     email = Column(String, ForeignKey("users.email"), nullable=False)
     total_price = Column(Float, nullable=False)
     status = Column(String, nullable=False)

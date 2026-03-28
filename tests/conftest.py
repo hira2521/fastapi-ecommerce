@@ -95,6 +95,7 @@ def user_token(client: TestClient):
     headers = {"Authorization": f"Bearer {token}"}
     return headers
 
+#product token for creating product
 @pytest.fixture
 def create_product(client: TestClient, admin_token):
     response = client.post(
